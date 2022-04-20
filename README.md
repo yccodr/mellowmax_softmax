@@ -10,6 +10,17 @@ poetry install
 ```
 3. you are good to go
 
+## Carry out an experiment
+
+```bash
+poetry run start -e <experiment_name>
+```
+### Experiment Name
+- `custom_mdp`
+- `random_mdp`
+- `taxi`
+- `lunar_lander`
+
 ## Dos & Don'ts
 - Make sure you are developing on different branch instead of 'main' branch.
 - After your work is done, push your branch and create a pull request to merge your code into 'main' branch.
