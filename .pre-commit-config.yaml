@@ -1,0 +1,16 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.2.0
+  hooks:
+  - id: check-yaml
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+- repo: https://github.com/google/yapf
+  rev: v0.31.0
+  hooks:
+  - id: yapf
+    name: code formatter
+    description: This hook format code with yapf
+    entry: bash -c 'yapf "$@"; git add -u' --
+    language: python
+    args: ["-i"]

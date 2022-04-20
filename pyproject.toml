@@ -12,6 +12,7 @@ plum-dispatch = "^1.5.9"
 
 [tool.poetry.dev-dependencies]
 yapf = "^0.31.0"
+pre-commit = "^2.18.1"
 
 [tool.poetry.scripts]
 start = "mellowmax_softmax.scripts.start_experiment:run_app"
