@@ -15,6 +15,20 @@ poetry install
 - After your work is done, push your branch and create a pull request to merge your code into 'main' branch.
 - Do not merge your code into 'main' branch on local and push it. May cause conflict with others' code.
 
+## Formatters
+
+### Using vscode
+
+add these lines below in .vscode/settings.json
+
+```json
+{
+    "python.formatting.provider": "yapf"
+}
+```
+
+You can also enable "format on save" in the setting.
+
 ## Coding Convention
 Optional. It would be nice if you follow.
 
