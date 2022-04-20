@@ -1,6 +1,8 @@
 import numpy as np
 
+
 class GVI:
+
     def start(self, **kwargs) -> int:
         """ start value iteration
 
