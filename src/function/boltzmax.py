@@ -1,5 +1,5 @@
 from plum import dispatch
-from numpy.typing import ArrayLike
+from numpy import ndarray
 from torch import Tensor
 
 @dispatch
@@ -7,5 +7,5 @@ def boltzmax(x: Tensor) -> Tensor:
     raise NotImplementedError
 
 @dispatch
-def boltzmax(x: ArrayLike) -> ArrayLike:
+def boltzmax(x: ndarray) -> ndarray:
     raise NotImplementedError

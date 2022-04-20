@@ -1,11 +1,11 @@
 from plum import dispatch
 from torch import Tensor
-from numpy.typing import ArrayLike
+from numpy import ndarray
 
 @dispatch
 def mellowmax(x: Tensor) -> Tensor:
     raise NotImplementedError
 
 @dispatch
-def mellowmax(x: Tensor) -> ArrayLike:
+def mellowmax(x: ndarray) -> ndarray:
     raise NotImplementedError
