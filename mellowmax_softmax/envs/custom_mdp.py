@@ -98,6 +98,7 @@ class CustomMDP(gym.Env):
     ):
         super().reset(seed=seed)
         self.state = 0
+        self.steps_beyond_done = None
 
         if not return_info:
             return np.array(self.state, dtype=np.int32)
