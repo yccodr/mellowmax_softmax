@@ -3,10 +3,9 @@ from typing import Optional, Union
 import gym
 import numpy as np
 from gym import logger, spaces
-from mellowmax_softmax.experiment import Experiment
 
 
-class CustomMDP(Experiment, gym.Env):
+class CustomMDP(gym.Env):
     """
     ### Description
 
