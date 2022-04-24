@@ -58,9 +58,10 @@ class CustomMDP(gym.Env):
         self.state = None
 
         # S x A x S' -> R
-        self.transition = np.array([[[0.66, 0.34], [0.99, 0.01]]])
+        self.transition = np.array([[[0.66, 0.34], [0.99, 0.01]],
+                                    [[0.0, 1.0], [0.0, 1.0]]])
 
-        self.reward = np.array([0.122, 0.033])
+        self.reward = np.array([[0.122, 0.033], [0.0, 0.0]])
         self.steps_beyond_done = None
 
     def step(self, action: Union[int, np.ndarray]):
