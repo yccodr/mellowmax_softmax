@@ -1,3 +1,4 @@
+"""Register custom environments for gym."""
 from gym.envs.registration import register
 
 register(

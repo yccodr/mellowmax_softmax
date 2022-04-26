@@ -1,12 +1,12 @@
 import argparse
 
-from mellowmax_softmax.envs import get_env
+import gym
 
 arg_exp = {
-    "custom_mdp": 'CustomMDP',
-    "lunar_lander": 'LunarLander',
-    "random_mdp": 'RandomMDP',
-    "taxi": 'Taxi',
+    "simple_mdp": 'SimpleMDP-v0',
+    "lunar_lander": 'LunarLander-v2',
+    "random_mdp": 'RandomMDP-v0',
+    "taxi": 'Taxi-v3',
 }
 
 
@@ -16,12 +16,12 @@ def run_app():
                         "--env",
                         "--environment",
                         type=str,
-                        default="custom_mdp",
+                        default="simple_mdp",
                         help="Environment name")
 
     args = parser.parse_args()
 
-    if args.environment not in arg_exp:
+    if args.env not in arg_exp:
         raise ValueError("Environment name not found")
 
-    env = get_env(arg_exp[args.experiment])
+    env = gym.make(arg_exp[args.env])
