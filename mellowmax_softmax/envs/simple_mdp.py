@@ -5,7 +5,7 @@ import numpy as np
 from gym import logger, spaces
 
 
-class CustomMDP(gym.Env):
+class SimpleMDP(gym.Env):
     """
     ### Description
 

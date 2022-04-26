@@ -3,7 +3,7 @@ from gym.envs.registration import register
 
 register(
     id='SimpleMDP-v0',
-    entry_point='mellowmax_softmax.envs.custom_mdp:CustomMDP',
+    entry_point='mellowmax_softmax.envs.simple_mdp:SimpleMDP',
     max_episode_steps=1000,
 )
 
