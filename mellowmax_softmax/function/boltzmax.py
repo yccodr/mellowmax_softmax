@@ -16,6 +16,8 @@ def boltzmax(x: Union[ndarray, Tensor], beta=1) -> Union[ndarray, Tensor]:
         x_exp = torch.exp(beta * x)
 
         s = torch.inner(x, x_exp)
-        s /= x_exp.sum()    
+        s /= x_exp.sum()
+    else:
+        raise TypeError("x must be either np.ndarray or torch.Tensor")
 
     return s
