@@ -1,63 +1,59 @@
+from xmlrpc.client import boolean
 import numpy as np
 from ..function.mellowmax import mellowmax
 from ..function.boltzmax import boltzmax
 
 
 class GVI:
+    """
+    Generalized Value Iteration (GVI)
+    """
 
-    def start(self,
-              env,
-              softmax: str,
-              gamma,
-              delta=None,
-              max_iteration=None,
-              beta=None,
-              epsilon=None):
+    def __init__(self,
+                 env=None,
+                 softmax=None,
+                 delta=1e-3,
+                 max_iter=1000,
+                 gamma=0.98) -> None:
+        """ initialize GVI algorithm
+        Arguments:
+            env: gym environment
+            softmax: softmax function
+            delta: termination condition, default: 1e-3
+            max_iter: maximum iteration before termination, default: 1000
+            gamma: discount factor, default: 0.98
+        """
+        self.env = env
+        self.softmax = softmax
+        self.delta = delta
+        self.max_iter = max_iter
+        self.gamma = gamma
+
+    def start(self) -> boolean:
         """ start value iteration
-        Args:
-            env: environment
-            softmax: 'mellow' or 'bolz'
-            gamma: discount factor
-            delta or max_iteration: termination condition
-            beta: argument of bolzmax
-            epsilon: argument of mellowmax
-
         Returns:
-            int: number of iterations 
             bool: terminated before reaching max_iteration
         """
-        if softmax == 'bolz':
-            if not beta:
-                raise ValueError("Missing argument: beta")
-            self.softmax = boltzmax
-            self.beta = beta
-        elif softmax == 'mellow':
-            if not epsilon:
-                raise ValueError("Missing argument: omega")
-            self.softmax = mellowmax
-            self.epsilon = epsilon
-        else:
-            raise ValueError("Softmax function not found")
-        if not delta or max_iteration:
-            raise ValueError("Missing argument: delta or max_iteration")
-        self.gamma = gamma
-        self.max_iteration = max_iteration
-        self.delta = delta
-        self.get_rewards_and_transitions_from_env(env)
-        num_iteration, done = self.policy_iteration()
-        self.reset()
-        return num_iteration, done
+        self.get_rewards_and_transitions_from_env(self.env)
+        self.num_iter, done = self.policy_iteration()
+        return done
 
     def get_rewards_and_transitions_from_env(self, env):
+        # Get state and action space sizes
         self.num_states = env.observation_space.n
         self.num_actions = env.action_space.n
+
+        # Intiailize matrices
         self.R = np.zeros((self.num_states, self.num_actions, self.num_states))
         self.P = np.zeros((self.num_states, self.num_actions, self.num_states))
+
+        # Get rewards and transition probabilitites for all transitions from an OpenAI gym environment
         for s in range(self.num_states):
             for a in range(self.num_actions):
-                for s_ in range(self.num_states):
-                    self.R[s, a, s_] = env.reward[s, a]
-                    self.P[s, a, s_] = env.transition[s, a, s_]
+                for transition in env.P[s][a]:
+                    prob, s_, r, done = transition
+                    self.R[s, a, s_] = r
+                    self.P[s, a, s_] = prob
 
     def policy_iteration(self):
         # initialize action value function Q
@@ -88,12 +84,35 @@ class GVI:
             if self.delta and diff < self.delta:
                 done = 1
                 break
-            if self.max_iteration and num_iteration >= self.max_iteration:
+            if self.max_iter and num_iteration >= self.max_iter:
                 break
         return num_iteration, done
 
-    def reset(self):
-        self.beta = None
-        self.epsilon = None
-        self.gamma = None
-        self.max_iteration = None
+    def set_env(self, env) -> None:
+        self.env = env
+
+    def set_softmax(self, softmax) -> None:
+        self.softmax = softmax
+
+    def set_delta(self, delta) -> None:
+        self.delta = delta
+
+    def set_max_iter(self, max_iter) -> None:
+        self.max_iter = max_iter
+
+    def set_gamma(self, gamma) -> None:
+        self.gamma = gamma
+
+    def get_reult(self) -> int:
+        """
+        return:
+            int: number of iteration executed before termination
+        """
+        return self.num_iter
+
+    def reset(self) -> None:
+        self.env = None
+        self.softmax = None
+        self.delta = 1e-3
+        self.max_iter = 1000
+        self.num_iter = None
