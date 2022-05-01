@@ -1,26 +1,14 @@
-import gym
+"""Register custom environments for gym."""
+from gym.envs.registration import register
 
-from .custom_mdp import CustomMDP as _CustomMDP
-from .random_mdp import RandomMDP as _RandomMDP
+register(
+    id='SimpleMDP-v0',
+    entry_point='mellowmax_softmax.envs.simple_mdp:SimpleMDP',
+    max_episode_steps=1000,
+)
 
-
-def get_env(name: str) -> gym.Env:
-    """
-    Get the environment by name.
-    Avaliable environments:
-        - `Taxi` : Taxi-v3
-        - `LunarLander` : LunarLander-v2
-        - `RandomMDP` : RandomMDP
-        - `CustomMDP` (default) : CustomMDP
-    """
-
-    if name == 'Taxi':
-        env = gym.make('Taxi-v3')
-    elif name == 'LunarLander':
-        env = gym.make('LunarLander-v2')
-    elif name == 'RandomMDP':
-        env = _RandomMDP()
-    else:
-        env = _CustomMDP()
-
-    return env
+register(
+    id='RandomMDP-v0',
+    entry_point='mellowmax_softmax.envs.random_mdp:RandomMDP',
+    max_episode_steps=1000,
+)

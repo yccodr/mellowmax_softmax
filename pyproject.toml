@@ -9,7 +9,9 @@ python = "^3.8"
 numpy = "^1.22.3"
 torch = "^1.11.0"
 plum-dispatch = "^1.5.9"
-gym = "^0.23.1"
+gym = {extras = ["Box_2D"], version = "^0.23.1"}
+pygame = "^2.1.2"
+Box2D = "^2.3.10"
 
 [tool.poetry.dev-dependencies]
 yapf = "^0.31.0"
