@@ -1,9 +1,9 @@
 from typing import Union
 
-import torch
 import numpy as np
-from torch import Tensor
+import torch
 from numpy import ndarray
+from torch import Tensor
 
 
 def boltzmax(x: Union[ndarray, Tensor], beta=1) -> Union[ndarray, Tensor]:

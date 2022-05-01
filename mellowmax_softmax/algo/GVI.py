@@ -1,7 +1,7 @@
-from xmlrpc.client import boolean
 import numpy as np
-from ..function.mellowmax import mellowmax
+
 from ..function.boltzmax import boltzmax
+from ..function.mellowmax import mellowmax
 
 
 class GVI:
@@ -29,7 +29,7 @@ class GVI:
         self.max_iter = max_iter
         self.gamma = gamma
 
-    def start(self) -> boolean:
+    def start(self) -> bool:
         """ start value iteration
         Returns:
             bool: terminated before reaching max_iteration

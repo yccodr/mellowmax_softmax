@@ -45,6 +45,9 @@ add these lines below in .vscode/settings.json
 
 You can also enable "format on save" in the setting.
 
+1. Right click on the file and click "Sort Imports"
+2. Right click on the file and click "Format Document"
+
 ## Coding Convention
 
 Optional. It would be nice if you follow.

@@ -1,7 +1,7 @@
-from plum import dispatch
-import torch
-from torch import Tensor
 import numpy as np
+import torch
+from plum import dispatch
+from torch import Tensor
 
 
 @dispatch
