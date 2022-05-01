@@ -34,6 +34,7 @@ class GVI:
         Returns:
             bool: terminated before reaching max_iteration
         """
+        # TODO: raise error if env == None
         self.get_rewards_and_transitions_from_env(self.env)
         self.num_iter, done = self.policy_iteration()
         return done
