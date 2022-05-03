@@ -1,4 +1,3 @@
-from xmlrpc.client import boolean
 import numpy as np
 from ..function.mellowmax import mellowmax
 from ..function.boltzmax import boltzmax
@@ -29,12 +28,20 @@ class GVI:
         self.max_iter = max_iter
         self.gamma = gamma
 
-    def start(self) -> boolean:
+        # TODO: build a function class
+        self.beta = 0.1
+
+    def start(self) -> bool:
         """ start value iteration
         Returns:
             bool: terminated before reaching max_iteration
         """
-        # TODO: raise error if env == None
+        if self.env == None:
+            raise ValueError("self.env is None")
+
+        if self.softmax == None:
+            raise ValueError("self.softmax is None")
+
         self.get_rewards_and_transitions_from_env(self.env)
         self.num_iter, done = self.policy_iteration()
         return done
@@ -59,34 +66,39 @@ class GVI:
     def policy_iteration(self):
         # initialize action value function Q
         Q = np.zeros((self.num_states, self.num_actions))
+        # Q = np.random.normal(0, 1.0, (self.num_states, self.num_actions))
+
         num_iteration = 0
         done = 0
         while True:
             num_iteration += 1
             diff = 0
-            Q_ = Q
+            Q_ = Q.copy()
+            # Q = np.zeros((self.num_states, self.num_actions))
+
             # update value function
-            Q = np.array([[
-                np.sum([
-                    self.R[s, a, s_] +
-                    self.gamma * self.P[s, a, s_] * self.softmax(Q[s_])
-                    for s_ in range(self.num_states)
-                ])
-                for a in range(self.num_actions)
-            ]
-                          for s in range(self.num_states)])
+            for s in range(self.num_states):
+                for a in range(self.num_actions):
+                    q = 0
+                    for s_ in range(self.num_states):
+                        r = self.gamma * self.P[s, a, s_] * self.softmax(
+                            Q_[s_], self.beta)
+
+                        q += np.sum(r) + self.R[s, a, s_]
+                    Q[s, a] = self.gamma * q
+
             # maximum difference
-            diff = np.max([
-                abs(Q[s, a] - Q_[s, a])
-                for a in range(self.num_actions)
-                for s in range(self.num_states)
-            ])
+            diff = np.max(np.abs(Q - Q_))
+
             # termination conditions
             if self.delta and diff < self.delta:
                 done = 1
                 break
             if self.max_iter and num_iteration >= self.max_iter:
                 break
+
+        self.Q = Q
+
         return num_iteration, done
 
     def set_env(self, env) -> None:
@@ -104,7 +116,7 @@ class GVI:
     def set_gamma(self, gamma) -> None:
         self.gamma = gamma
 
-    def get_reult(self) -> int:
+    def get_result(self) -> int:
         """
         return:
             int: number of iteration executed before termination
