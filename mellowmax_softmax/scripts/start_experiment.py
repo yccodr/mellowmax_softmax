@@ -1,6 +1,8 @@
 import argparse
 
 import gym
+from mellowmax_softmax.algo.GVI import GVI
+from mellowmax_softmax.function import boltzmax, mellowmax
 
 arg_exp = {
     "simple_mdp": 'SimpleMDP-v0',
@@ -25,3 +27,10 @@ def run_app():
         raise ValueError("Environment name not found")
 
     env = gym.make(arg_exp[args.env])
+
+    gvi = GVI(env=env, softmax=mellowmax.mellowmax)
+
+    finished = gvi.start()
+    result = gvi.get_result()
+
+    print(f'finished: {finished}, result: {result}')
