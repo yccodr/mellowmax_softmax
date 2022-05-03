@@ -17,9 +17,13 @@ tqdm = "^4.64.0"
 [tool.poetry.dev-dependencies]
 yapf = "^0.31.0"
 pylint = "^2.13.7"
+toml = "^0.10.2"
 
 [tool.poetry.scripts]
 start = "mellowmax_softmax.scripts.start_experiment:run_app"
+
+[tool.yapf]
+based_on_style = "google"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
