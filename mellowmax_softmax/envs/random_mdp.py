@@ -64,6 +64,11 @@ class RandomMDP(gym.Env):
             np.max(self.transition) - np.min(self.transition))
         self.transition /= np.sum(self.transition, axis=-1, keepdims=True)
 
+        self.P = {
+            state: {action: [] for action in range(action_space_size)
+                   } for state in range(state_space_size)
+        }
+
         # S x A -> R
         self.reward = _random_matrix((state_space_size, action_space_size),
                                      self.np_random)
@@ -71,6 +76,14 @@ class RandomMDP(gym.Env):
         # Limit the max reward to be 0.5.
         self.reward /= np.max(self.reward)
         self.reward *= 0.5
+
+        # build P transition matrix
+        for s in range(state_space_size):
+            for a in range(action_space_size):
+                reward = self.reward[s, a]
+                for s_ in range(state_space_size):
+                    self.P[s][a].append((self.transition[s, a, s_], s_, reward,
+                                         s_ == state_space_size - 1))
 
         self.iterations = 0
         self.steps_beyond_done = None

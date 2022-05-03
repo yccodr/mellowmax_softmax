@@ -61,6 +61,17 @@ class SimpleMDP(gym.Env):
         self.transition = np.array([[[0.66, 0.34], [0.99, 0.01]],
                                     [[0.0, 1.0], [0.0, 1.0]]])
 
+        self.P = {
+            0: {
+                0: [(0.66, 0, 0.122, False), (0.34, 1, 0.122, True)],
+                1: [(0.99, 0, 0.033, False), (0.01, 1, 0.033, True)]
+            },
+            1: {
+                0: [(0, 0, 0, False), (1, 1, 0, True)],
+                1: [(0, 0, 0, False), (1, 1, 0, True)]
+            }
+        }
+
         self.reward = np.array([[0.122, 0.033], [0.0, 0.0]])
         self.steps_beyond_done = None
 
