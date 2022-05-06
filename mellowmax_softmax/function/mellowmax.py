@@ -1,36 +1,39 @@
-from plum import dispatch
-import torch
-from torch import Tensor
+from typing import Union
+
 import numpy as np
+import torch
 
 
-@dispatch
-def mellowmax(x: Tensor, omega=1) -> Tensor:
-    ## Shifter
-    c = x.max()
-    x = x - c
+class Mellowmax():
+    def __init__(self, omega=1) -> None:
+        self.omega = omega
 
-    x = x * omega
-    x = torch.exp(x)
+    def __call__(self, x: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+        if isinstance(x, np.ndarray):
+            ## Shifter
+            c = x.max()
+            x = x - c
 
-    s = torch.sum(x)
-    s /= torch.numel(x)
-    s = torch.log(s)
+            x = x * self.omega
+            x = np.exp(x)
 
-    return s / omega + c
+            s = np.sum(x, keepdims=True)
+            s /= np.size(x)
+            s = np.log(s)
 
+        elif isinstance(x, torch.Tensor):
+            ## Shifter
+            c = x.max()
+            x = x - c
 
-@dispatch
-def mellowmax(x: np.ndarray, omega=1) -> np.ndarray:
-    ## Shifter
-    c = x.max()
-    x = x - c
+            x = x * self.omega
+            x = torch.exp(x)
 
-    x = x * omega
-    x = np.exp(x)
+            s = torch.sum(x)
+            s /= torch.numel(x)
+            s = torch.log(s)
 
-    s = np.sum(x, keepdims=True)
-    s /= np.size(x)
-    s = np.log(s)
+        else:
+            raise TypeError("x must be either np.ndarray or torch.Tensor")
 
-    return s / omega + c
+        return s / self.omega + c
