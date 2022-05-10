@@ -2,6 +2,7 @@ from typing import Union
 
 import numpy as np
 import torch
+from scipy import optimize
 
 
 class Mellowmax():
@@ -37,3 +38,34 @@ class Mellowmax():
             raise TypeError("x must be either np.ndarray or torch.Tensor")
 
         return s / self.omega + c
+
+
+class MellowmaxPolicy():
+    def __init__(self, omega=1) -> None:
+        self.omega = omega
+        self.mm = Mellowmax(self.omega)
+    
+    def __call__(self, x: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+        beta = self.compute_beta(x)
+        
+        if isinstance(x, np.ndarray):
+            c = x.max()
+            x_exp = np.exp(beta * (x - c))
+            s /= np.sum(x_exp)
+
+        elif isinstance(x, torch.Tensor):
+            c = x.max()
+            x_exp = torch.exp(beta * (x - c))
+            s /= x_exp.sum()
+
+        else:
+            raise TypeError("x must be either np.ndarray or torch.Tensor")
+
+        return s
+    
+    def compute_beta(self, x):
+        tmp = x - self.mm(x)
+        def f(beta):
+            return np.exp(beta * tmp) @ tmp
+        
+        return optimize.brentq(f, -10, 10)
