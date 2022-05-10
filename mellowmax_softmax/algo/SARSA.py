@@ -5,6 +5,7 @@ class SARSA:
     """
     State-action-reward-state-action (SARSA)
     """
+
     def __init__(self,
                  env=None,
                  policy=None,
@@ -55,7 +56,8 @@ class SARSA:
         while True:
             next_state, reward, done, info = self.env.step(action)
             # choose action
-            next_action = np.random.choice(range(self.num_actions), p=self.policy(Q[next_state]))
+            next_action = np.random.choice(range(self.num_actions),
+                                           p=self.policy(Q[next_state]))
             self.update_value(state, action, reward, next_state, next_action,
                               done, Q)
 
