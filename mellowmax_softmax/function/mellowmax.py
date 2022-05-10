@@ -65,6 +65,8 @@ class MellowmaxPolicy():
     
     def compute_beta(self, x):
         tmp = x - self.mm(x)
+
+        # TODO: Haven't implemented torch version
         def f(beta):
             return np.exp(beta * tmp) @ tmp
         
