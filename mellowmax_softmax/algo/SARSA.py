@@ -56,24 +56,31 @@ class SARSA:
         num_iteration = 0
         reward = 0
         done = 0
+        state = self.env.reset()
+        action = np.random.choice(range(self.num_actions),
+                                  p=self.policy(Q[state]))
+
         while True:
             num_iteration += 1
-            next_state, reward, done, info = self.env.step(action)
+
+            next_state, reward, done, _ = self.env.step(action)
 
             # choose action
             next_action = np.random.choice(range(self.num_actions),
                                            p=self.policy(Q[next_state]))
+
             self.update_value(state, action, reward, next_state, next_action,
                               done, Q)
 
             reward += reward
-            state, action = next_state, next_action
 
             if done:
                 done = 1
                 break
             if num_iteration > self.max_iter:
                 break
+
+            state, action = next_state, next_action
 
         self.Q = Q
 
