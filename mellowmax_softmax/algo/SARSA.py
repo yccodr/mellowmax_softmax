@@ -55,6 +55,7 @@ class SARSA:
         done = 0
         while True:
             next_state, reward, done, info = self.env.step(action)
+
             # choose action
             next_action = np.random.choice(range(self.num_actions),
                                            p=self.policy(Q[next_state]))
