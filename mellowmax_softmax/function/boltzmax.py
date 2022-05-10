@@ -33,9 +33,10 @@ class Boltzmax():
 
 
 class BoltzmannPolicy():
+
     def __init__(self, beta=1) -> None:
         self.beta = beta
-    
+
     def __call__(self, x: Union[ndarray, Tensor]) -> Union[ndarray, Tensor]:
         if isinstance(x, ndarray):
             c = x.max()

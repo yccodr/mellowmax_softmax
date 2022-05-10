@@ -6,10 +6,13 @@ from scipy import optimize
 
 
 class Mellowmax():
+
     def __init__(self, omega=1) -> None:
         self.omega = omega
 
-    def __call__(self, x: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+    def __call__(
+            self, x: Union[np.ndarray,
+                           torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
         if isinstance(x, np.ndarray):
             ## Shifter
             c = x.max()
@@ -41,13 +44,16 @@ class Mellowmax():
 
 
 class MellowmaxPolicy():
+
     def __init__(self, omega=1) -> None:
         self.omega = omega
         self.mm = Mellowmax(self.omega)
-    
-    def __call__(self, x: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+
+    def __call__(
+            self, x: Union[np.ndarray,
+                           torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
         beta = self.compute_beta(x)
-        
+
         if isinstance(x, np.ndarray):
             c = x.max()
             x_exp = np.exp(beta * (x - c))
@@ -62,12 +68,12 @@ class MellowmaxPolicy():
             raise TypeError("x must be either np.ndarray or torch.Tensor")
 
         return s
-    
+
     def compute_beta(self, x):
         tmp = x - self.mm(x)
 
         # TODO: Haven't implemented torch version
         def f(beta):
             return np.exp(beta * tmp) @ tmp
-        
+
         return optimize.brentq(f, -10, 10)
