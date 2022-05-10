@@ -82,8 +82,9 @@ class SARSA:
                 return np.argmax(Q[state])
 
         elif self.policy == 'boltzmann' or self.policy == 'mellowmax':
-            return np.random.choice(range(self.num_actions),
-                                    p=self.softmax(Q[state]))
+            x = Q[state]
+            x /= x.sum()
+            return np.random.choice(range(self.num_actions), p=self.softmax(x))
 
     def update_value(self, state, action, reward, next_state, next_action, done,
                      Q):
