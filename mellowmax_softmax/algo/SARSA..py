@@ -12,7 +12,15 @@ class SARSA:
                  alpha=0.1,
                  max_iter=1000,
                  gamma=0.98) -> None:
-        # TODO: comments on constructor parameters
+        """ initialize SARSA algorithm
+        Arguments:
+            env: gym environment
+            softmax: softmax function
+            policy: policy to choose action. ['eps_greedy', 'boltzmann', 'mellowmax']
+            alpha: learning rate, default: 0.1
+            max_iter: maximum iteration before termination, default: 1000
+            gamma: discount factor, default: 0.98
+        """
 
         self.env = env
         self.softmax = softmax
@@ -72,6 +80,7 @@ class SARSA:
                 return np.random.randint(self.num_actions)
             else:
                 return np.argmax(Q[state])
+
         elif self.policy == 'boltzmann' or self.policy == 'mellowmax':
             return np.random.choice(range(self.num_actions),
                                     p=self.softmax(Q[state]))
