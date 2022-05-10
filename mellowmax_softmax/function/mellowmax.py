@@ -51,12 +51,12 @@ class MellowmaxPolicy():
         if isinstance(x, np.ndarray):
             c = x.max()
             x_exp = np.exp(beta * (x - c))
-            s /= np.sum(x_exp)
+            s = x_exp / np.sum(x_exp)
 
         elif isinstance(x, torch.Tensor):
             c = x.max()
             x_exp = torch.exp(beta * (x - c))
-            s /= x_exp.sum()
+            s = x_exp / np.sum(x_exp)
 
         else:
             raise TypeError("x must be either np.ndarray or torch.Tensor")
