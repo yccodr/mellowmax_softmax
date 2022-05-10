@@ -59,6 +59,7 @@ class SARSA:
         reward = 0
         done = 0
         while True:
+            num_iteration += 1
             next_state, reward, done, info = self.env.step(action)
             next_action = self.choose_action(next_state, Q)
             self.update_value(state, action, reward, next_state, next_action,
