@@ -1,6 +1,4 @@
 import numpy as np
-from ..function.mellowmax import mellowmax
-from ..function.boltzmax import boltzmax
 
 
 class GVI:
@@ -13,7 +11,8 @@ class GVI:
                  softmax=None,
                  delta=1e-3,
                  max_iter=1000,
-                 gamma=0.98) -> None:
+                 gamma=0.98,
+                 rng=np.random.RandomState(10)) -> None:
         """ initialize GVI algorithm
         Arguments:
             env: gym environment
@@ -27,9 +26,7 @@ class GVI:
         self.delta = delta
         self.max_iter = max_iter
         self.gamma = gamma
-
-        # TODO: build a function class
-        self.beta = 0.1
+        self.rng = rng
 
     def start(self) -> bool:
         """ start value iteration
@@ -66,7 +63,7 @@ class GVI:
     def policy_iteration(self):
         # initialize action value function Q
         # Q = np.zeros((self.num_states, self.num_actions))
-        Q = np.random.normal(1, 1.0, (self.num_states, self.num_actions))
+        Q = self.rng.normal(1, 1.0, (self.num_states, self.num_actions))
 
         num_iteration = 0
         done = 0
@@ -81,8 +78,7 @@ class GVI:
                 for a in range(self.num_actions):
                     q = 0
                     for s_ in range(self.num_states):
-                        r = self.gamma * self.P[s, a, s_] * self.softmax(
-                            Q_[s_], self.beta)
+                        r = self.gamma * self.P[s, a, s_] * self.softmax(Q_[s_])
 
                         q += np.sum(r) + self.R[s, a, s_]
                     Q[s, a] = self.gamma * q
