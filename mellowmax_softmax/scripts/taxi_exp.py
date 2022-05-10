@@ -2,15 +2,19 @@ import json
 
 import gym
 import numpy as np
-from torch import softmax
-from mellowmax_softmax.function import Boltzmax, Mellowmax
 from mellowmax_softmax.algo import SARSA
+from mellowmax_softmax.function import Boltzmax, Mellowmax
+from mellowmax_softmax.function.boltzmax import BoltzmannPolicy
+from mellowmax_softmax.function.mellowmax import MellowmaxPolicy
+from mellowmax_softmax.utils import sigterm_decorator
+from torch import softmax
 from tqdm import tqdm, trange
 
-RUNS = 25
+RUNS = 5
 STEP = 300000
 
 
+@sigterm_decorator()
 def main() -> np.floating:
     """experiment in `taxi-v2`
 
@@ -21,13 +25,16 @@ def main() -> np.floating:
 
     for _ in trange(RUNS):
         remain_steps = STEP
-        env = gym.make('taxi-v2')
+        env = gym.make('Taxi-v3')
 
         with tqdm(total=STEP) as step_pbar:
             while remain_steps > 0:
 
-                # TODO: add softmax policy
-                agent = SARSA(env=env, softmax=None, max_iter=remain_steps)
+                agent = SARSA(
+                    env=env,
+                    #   policy=BoltzmannPolicy(16.55),
+                    policy=MellowmaxPolicy(16.55),
+                    max_iter=remain_steps)
 
                 steps, reward, _ = agent.start()
                 returns.append(reward)
@@ -36,3 +43,7 @@ def main() -> np.floating:
                 step_pbar.update(steps)
 
     return np.average(returns)
+
+
+if __name__ == '__main__':
+    print(main())
