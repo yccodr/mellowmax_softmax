@@ -1,2 +1,2 @@
-from boltzmax import *
-from mellowmax import *
+from .boltzmax import *
+from .mellowmax import *
