@@ -32,8 +32,11 @@ class SARSA:
 
     def start(self) -> bool:
         """ start value iteration
-        Returns:
-            bool: terminated before reaching max_iteration
+
+            Returns:
+                int: number of iteration
+                [env.reward]: sum of reward from env
+                bool: terminated before reaching max_iteration
         """
         if self.env == None:
             raise ValueError("self.env is None")
@@ -45,7 +48,7 @@ class SARSA:
         self.num_actions = self.env.action_space.n
 
         self.num_iter, self.reward, done = self.run()
-        return done
+        return self.num_iter, self.reward, done
 
     def run(self):
         # initialize acion value function Q
