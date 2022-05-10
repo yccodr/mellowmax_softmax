@@ -5,7 +5,7 @@ description = ""
 authors = ["newb1er <32424677+newb1er@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "~3.8"
 numpy = "^1.22.3"
 torch = "^1.11.0"
 plum-dispatch = "^1.5.9"
@@ -13,11 +13,13 @@ gym = {extras = ["Box_2D"], version = "^0.23.1"}
 pygame = "^2.1.2"
 Box2D = "^2.3.10"
 tqdm = "^4.64.0"
+scipy = "^1.8.0"
 
 [tool.poetry.dev-dependencies]
 yapf = "^0.31.0"
 pylint = "^2.13.7"
 toml = "^0.10.2"
+pytest = "^7.1.2"
 
 [tool.poetry.scripts]
 start = "mellowmax_softmax.scripts.start_experiment:run_app"
