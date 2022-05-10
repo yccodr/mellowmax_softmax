@@ -5,6 +5,7 @@ class SARSA:
     """
     State-action-reward-state-action (SARSA)
     """
+
     def __init__(self,
                  env=None,
                  softmax=None,
