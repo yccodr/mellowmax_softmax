@@ -30,3 +30,24 @@ class Boltzmax():
             raise TypeError("x must be either np.ndarray or torch.Tensor")
 
         return s
+
+
+class BoltzmannPolicy():
+    def __init__(self, beta=1) -> None:
+        self.beta = beta
+    
+    def __call__(self, x: Union[ndarray, Tensor]) -> Union[ndarray, Tensor]:
+        if isinstance(x, ndarray):
+            c = x.max()
+            x_exp = np.exp(self.beta * (x - c))
+            s = x_exp / np.sum(x_exp)
+
+        elif isinstance(x, Tensor):
+            c = x.max()
+            x_exp = torch.exp(self.beta * (x - c))
+            s = x_exp / np.sum(x_exp)
+
+        else:
+            raise TypeError("x must be either np.ndarray or torch.Tensor")
+
+        return s
