@@ -6,11 +6,15 @@ from mellowmax_softmax.function.boltzmax import BoltzmannPolicy
 from mellowmax_softmax.function.mellowmax import MellowmaxPolicy
 from mellowmax_softmax.function.eps_greedy import EpsGreedy
 
-random_seed = 20
-torch.manual_seed(random_seed)
+#####################
+SEED = 7777
+MAX_EP = 40000
+#####################
+
+torch.manual_seed(SEED)
 
 env = gym.make('LunarLander-v2')
-env.reset(seed=random_seed)
+env.reset(seed=SEED)
 
 discrete = isinstance(env.action_space, gym.spaces.Discrete)
 observation_dim = env.observation_space.shape[0]
@@ -19,5 +23,7 @@ hidden_size = 128
 
 policyNet = policy(observation_dim, action_dim, hidden_size)
 
-PG = reinforce(env, policyNet, BoltzmannPolicy(16.55), maxEpisodeNum=40000)
+PG = reinforce(env, policyNet, BoltzmannPolicy(16.55), maxEpisodeNum=MAX_EP)
+
+# reward: list of episode rewards
 rewards = PG.train()

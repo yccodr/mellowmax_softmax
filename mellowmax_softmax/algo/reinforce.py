@@ -39,8 +39,8 @@ class reinforce():
         return action.item()
 
     def calculateLoss(self):
-        # print(self.savedAction)
         savedAction = torch.Tensor(self.savedAction).requires_grad_().double()
+
         returns = []
         reversedRewards = np.flip(self.rewards, 0)
         g_t = 0
@@ -50,7 +50,7 @@ class reinforce():
         returns = torch.tensor(returns)
         # returns = (returns - returns.mean()) / returns.std()
         returns = returns.detach()
-        # print(returns)
+
         loss = -torch.inner(returns, savedAction)
 
         return loss
