@@ -5,98 +5,98 @@ import torch
 import mellowmax_softmax.function as F
 
 
-def test_boltzmax_np():
-    beta = 5
-    boltzmax = F.Boltzmax(beta=beta)
+class TestBoltzmax:
 
-    arr = np.array([0.1, 0.2, 0.3])
-    arr_exp = np.exp(beta * (arr - arr.max()))
-    expected = np.inner(arr, arr_exp) / np.sum(arr_exp)
+    def test_boltzmax_np(self):
+        beta = 5
+        boltzmax = F.Boltzmax(beta=beta)
 
-    assert pytest.approx(boltzmax(arr)) == expected
+        arr = np.array([0.1, 0.2, 0.3])
+        arr_exp = np.exp(beta * (arr - arr.max()))
+        expected = np.inner(arr, arr_exp) / np.sum(arr_exp)
 
+        assert pytest.approx(boltzmax(arr)) == expected
 
-def test_boltzmax_torch():
-    beta = 5
-    boltzmax = F.Boltzmax(beta=beta)
+    def test_boltzmax_torch(self):
+        beta = 5
+        boltzmax = F.Boltzmax(beta=beta)
 
-    arr = torch.Tensor([0.1, 0.2, 0.3])
-    arr_exp = torch.exp(beta * (arr - arr.max()))
-    expected = torch.inner(arr, arr_exp) / torch.sum(arr_exp)
+        arr = torch.Tensor([0.1, 0.2, 0.3])
+        arr_exp = torch.exp(beta * (arr - arr.max()))
+        expected = torch.inner(arr, arr_exp) / torch.sum(arr_exp)
 
-    assert pytest.approx(boltzmax(arr)) == expected
+        assert pytest.approx(boltzmax(arr)) == expected
 
+    def test_boltzmax_exception(self):
+        boltzmax = F.Boltzmax()
 
-def test_boltzmax_exception():
-    boltzmax = F.Boltzmax()
-
-    with pytest.raises(TypeError):
-        boltzmax(None)
-
-
-def test_boltzmann_policy_np():
-    beta = 5
-    boltzmann_policy = F.BoltzmannPolicy(beta=beta)
-
-    arr = np.array([0.1, 0.2, 0.3])
-    arr_exp = np.exp(beta * (arr - arr.max()))
-    expected = arr_exp / np.sum(arr_exp)
-
-    assert pytest.approx(boltzmann_policy(arr)) == expected
+        with pytest.raises(TypeError):
+            boltzmax(None)
 
 
-def test_boltzmann_policy_torch():
-    beta = 5
-    boltzmann_policy = F.BoltzmannPolicy(beta=beta)
+class TestBoltzmannPolicy:
 
-    arr = torch.Tensor([0.1, 0.2, 0.3])
-    arr_exp = torch.exp(beta * (arr - arr.max()))
-    expected = arr_exp / torch.sum(arr_exp)
+    def test_boltzmann_policy_np(self):
+        beta = 5
+        boltzmann_policy = F.BoltzmannPolicy(beta=beta)
 
-    assert pytest.approx(boltzmann_policy(arr)) == expected
+        arr = np.array([0.1, 0.2, 0.3])
+        arr_exp = np.exp(beta * (arr - arr.max()))
+        expected = arr_exp / np.sum(arr_exp)
 
+        assert pytest.approx(boltzmann_policy(arr)) == expected
 
-def test_boltzmann_policy_exception():
-    boltzmann_policy = F.BoltzmannPolicy()
+    def test_boltzmann_policy_torch(self):
+        beta = 5
+        boltzmann_policy = F.BoltzmannPolicy(beta=beta)
 
-    with pytest.raises(TypeError):
-        boltzmann_policy(None)
+        arr = torch.Tensor([0.1, 0.2, 0.3])
+        arr_exp = torch.exp(beta * (arr - arr.max()))
+        expected = arr_exp / torch.sum(arr_exp)
 
+        assert pytest.approx(boltzmann_policy(arr)) == expected
 
-def test_eps_greedy_np():
-    rng = np.random.default_rng(10)
-    # First rng.random() is 0.9560017096289753
-    # Second rng.random() is 0.20768181007914688
+    def test_boltzmann_policy_exception(self):
+        boltzmann_policy = F.BoltzmannPolicy()
 
-    eps_greedy = F.EpsGreedy(eps=0.5, rng=rng)
-
-    arr = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
-
-    expected1 = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
-    assert pytest.approx(eps_greedy(arr)) == expected1
-
-    expected2 = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-    assert pytest.approx(eps_greedy(arr)) == expected2
+        with pytest.raises(TypeError):
+            boltzmann_policy(None)
 
 
-def test_eps_greedy_torch():
-    rng = np.random.default_rng(10)
-    # First rng.random() is 0.9560017096289753
-    # Second rng.random() is 0.20768181007914688
+class TestEpsGreedy:
 
-    eps_greedy = F.EpsGreedy(eps=0.5, rng=rng)
+    def test_eps_greedy_np(self):
+        rng = np.random.default_rng(10)
+        # First rng.random() is 0.9560017096289753
+        # Second rng.random() is 0.20768181007914688
 
-    arr = torch.Tensor([0.1, 0.2, 0.3, 0.4, 0.5])
+        eps_greedy = F.EpsGreedy(eps=0.5, rng=rng)
 
-    expected1 = torch.Tensor([0.0, 0.0, 0.0, 0.0, 1.0])
-    assert pytest.approx(eps_greedy(arr)) == expected1
+        arr = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
 
-    expected2 = torch.Tensor([0.2, 0.2, 0.2, 0.2, 0.2])
-    assert pytest.approx(eps_greedy(arr)) == expected2
+        expected1 = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
+        assert pytest.approx(eps_greedy(arr)) == expected1
 
+        expected2 = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
+        assert pytest.approx(eps_greedy(arr)) == expected2
 
-def test_eps_greedy_exception():
-    eps_greedy = F.EpsGreedy()
+    def test_eps_greedy_torch(self):
+        rng = np.random.default_rng(10)
+        # First rng.random() is 0.9560017096289753
+        # Second rng.random() is 0.20768181007914688
 
-    with pytest.raises(TypeError):
-        eps_greedy(None)
+        eps_greedy = F.EpsGreedy(eps=0.5, rng=rng)
+
+        arr = torch.Tensor([0.1, 0.2, 0.3, 0.4, 0.5])
+
+        expected1 = torch.Tensor([0.0, 0.0, 0.0, 0.0, 1.0])
+        assert pytest.approx(eps_greedy(arr)) == expected1
+
+        expected2 = torch.Tensor([0.2, 0.2, 0.2, 0.2, 0.2])
+        assert pytest.approx(eps_greedy(arr)) == expected2
+
+    def test_eps_greedy_exception(self):
+        eps_greedy = F.EpsGreedy()
+
+        with pytest.raises(TypeError):
+            eps_greedy(None)
