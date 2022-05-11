@@ -24,6 +24,12 @@ pytest = "^7.1.2"
 [tool.poetry.scripts]
 start = "mellowmax_softmax.scripts.start_experiment:run_app"
 
+[tool.pylint.typecheck]
+generated-members = [
+    "np.*",
+    "torch.*",
+]
+
 [tool.yapf]
 based_on_style = "google"
 
