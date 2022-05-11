@@ -30,7 +30,6 @@ class reinforce():
     def selectAction(self, state):
         probs = self.policy(state)
         probs = self.softmax(probs)
-        probs = probs / torch.mean(probs).data
         m = Categorical(probs)
         action = m.sample()
 
@@ -39,7 +38,8 @@ class reinforce():
         return action.item()
 
     def calculateLoss(self):
-        savedAction = torch.cat(self.savedAction)
+        # print(self.savedAction)
+        savedAction = torch.tensor(self.savedAction).double()
         returns = []
         reversedRewards = np.flip(self.rewards, 0)
         g_t = 0
@@ -49,7 +49,8 @@ class reinforce():
         returns = torch.tensor(returns)
         # returns = (returns - returns.mean()) / returns.std()
         returns = returns.detach()
-        loss = -(returns * savedAction).sum()
+        # print(returns)
+        loss = -torch.inner(returns, savedAction)
 
         return loss
 
@@ -68,12 +69,13 @@ class reinforce():
 
         for i_episode in count(1):
             t = 0
-            state = self.env.reset()
+            state = torch.Tensor(self.env.reset())
 
             while t < 9999:
                 t += 1
-                action = self.select_action(state)
+                action = self.selectAction(state)
                 state, reward, done, _ = self.env.step(action)
+                state = torch.Tensor(state)
                 self.rewards.append(reward)
                 if done:
                     break
@@ -86,6 +88,8 @@ class reinforce():
 
             if i_episode >= self.maxEpisodeNum:
                 break
+
+            print('hah')
 
     def getRewardHistory(self):
         return self.epRewardHistory
