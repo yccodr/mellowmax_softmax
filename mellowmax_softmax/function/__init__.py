@@ -1,2 +1,5 @@
-from .boltzmax import *
-from .mellowmax import *
+from mellowmax_softmax.function.boltzmax import BoltzmannPolicy
+from mellowmax_softmax.function.boltzmax import Boltzmax
+from mellowmax_softmax.function.eps_greedy import EpsGreedy
+from mellowmax_softmax.function.mellowmax import Mellowmax
+from mellowmax_softmax.function.mellowmax import MellowmaxPolicy
