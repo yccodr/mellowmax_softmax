@@ -1,26 +1,38 @@
+import gym
 import numpy as np
 
 
 class GVI:
-    """
-    Generalized Value Iteration (GVI)
+    """Generalized Value Iteration (GVI)
     """
 
-    def __init__(self,
-                 env=None,
-                 softmax=None,
-                 delta=1e-3,
-                 max_iter=1000,
-                 gamma=0.98,
-                 rng=np.random.RandomState(10)) -> None:
-        """ initialize GVI algorithm
-        Arguments:
-            env: gym environment
-            softmax: softmax function
-            delta: termination condition, default: 1e-3
-            max_iter: maximum iteration before termination, default: 1000
-            gamma: discount factor, default: 0.98
+    def __init__(
+        self,
+        env: gym.Env,
+        softmax,
+        delta: float = 1e-3,
+        max_iter: int = 1000,
+        gamma: float = 0.98,
+        rng: np.random.RandomState = np.random.RandomState(10)
+    ) -> None:
+        """Initialize GVI algorithm.
+
+        Args:
+            env: Gym environment.
+            softmax: Softmax function.
+            delta: Termination condition, default 1e-3.
+            max_iter: Maximum iteration before termination, default 1000.
+            gamma: Discount factor, default 0.98.
+            rng: Numpy random number generator, default np.random.RandomState(10).
         """
+
+        if not callable(softmax):
+            raise TypeError('softmax must be callable.')
+        if delta < 0:
+            raise ValueError('delta must be greater than 0.')
+        if max_iter < 0:
+            raise ValueError('max_iter must be greater than 0.')
+
         self.env = env
         self.softmax = softmax
         self.delta = delta
@@ -29,15 +41,11 @@ class GVI:
         self.rng = rng
 
     def start(self) -> bool:
-        """ start value iteration
-        Returns:
-            bool: terminated before reaching max_iteration
-        """
-        if self.env == None:
-            raise ValueError("self.env is None")
+        """Start value iteration.
 
-        if self.softmax == None:
-            raise ValueError("self.softmax is None")
+        Returns:
+            done (bool): If it terminated before reaching max_iteration.
+        """
 
         self.get_rewards_and_transitions_from_env(self.env)
         self.num_iter, done = self.policy_iteration()
@@ -66,7 +74,7 @@ class GVI:
         Q = self.rng.normal(1, 1.0, (self.num_states, self.num_actions))
 
         num_iteration = 0
-        done = 0
+        done = False
         while True:
             num_iteration += 1
             diff = 0
@@ -88,7 +96,7 @@ class GVI:
 
             # termination conditions
             if self.delta and diff < self.delta:
-                done = 1
+                done = True
                 break
             if self.max_iter and num_iteration >= self.max_iter:
                 break
@@ -97,19 +105,25 @@ class GVI:
 
         return num_iteration, done
 
-    def set_env(self, env) -> None:
+    def set_env(self, env: gym.Env) -> None:
         self.env = env
 
     def set_softmax(self, softmax) -> None:
+        if not callable(softmax):
+            raise TypeError('softmax must be callable.')
         self.softmax = softmax
 
-    def set_delta(self, delta) -> None:
+    def set_delta(self, delta: float) -> None:
+        if delta < 0:
+            raise ValueError('delta must be greater than 0.')
         self.delta = delta
 
-    def set_max_iter(self, max_iter) -> None:
+    def set_max_iter(self, max_iter: int) -> None:
+        if max_iter < 0:
+            raise ValueError('max_iter must be greater than 0.')
         self.max_iter = max_iter
 
-    def set_gamma(self, gamma) -> None:
+    def set_gamma(self, gamma: float) -> None:
         self.gamma = gamma
 
     def get_result(self) -> int:
