@@ -46,8 +46,7 @@ class BoltzmannPolicy():
         elif isinstance(x, Tensor):
             c = x.max()
             x_exp = torch.exp(self.beta * (x - c))
-            s = x_exp / np.sum(x_exp)
-
+            s = x_exp / x_exp.sum()
         else:
             raise TypeError("x must be either np.ndarray or torch.Tensor")
 
