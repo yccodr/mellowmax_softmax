@@ -34,17 +34,13 @@ class BoltzmannPolicy():
         self,
         x: Union[np.ndarray, torch.Tensor],
     ) -> Union[np.ndarray, torch.Tensor]:
+
         if isinstance(x, np.ndarray):
-            c = x.max()
-            x_exp = np.exp(self.beta * (x - c))
-            s = x_exp / np.sum(x_exp)
+            x_exp = np.exp(self.beta * (x - x.max()))
+            return x_exp / np.sum(x_exp)
 
-        elif isinstance(x, torch.Tensor):
-            c = x.max()
-            x_exp = torch.exp(self.beta * (x - c))
-            s = x_exp / np.sum(x_exp)
+        if isinstance(x, torch.Tensor):
+            x_exp = torch.exp(self.beta * (x - x.max()))
+            return x_exp / torch.sum(x_exp)
 
-        else:
-            raise TypeError('x must be either np.ndarray or torch.Tensor.')
-
-        return s
+        raise TypeError('x must be either np.ndarray or torch.Tensor.')

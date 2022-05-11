@@ -34,6 +34,35 @@ def test_boltzmax_exception():
         boltzmax(None)
 
 
+def test_boltzmann_policy_np():
+    beta = 5
+    boltzmann_policy = F.BoltzmannPolicy(beta=beta)
+
+    arr = np.array([0.1, 0.2, 0.3])
+    arr_exp = np.exp(beta * (arr - arr.max()))
+    expected = arr_exp / np.sum(arr_exp)
+
+    assert pytest.approx(boltzmann_policy(arr)) == expected
+
+
+def test_boltzmann_policy_torch():
+    beta = 5
+    boltzmann_policy = F.BoltzmannPolicy(beta=beta)
+
+    arr = torch.Tensor([0.1, 0.2, 0.3])
+    arr_exp = torch.exp(beta * (arr - arr.max()))
+    expected = arr_exp / torch.sum(arr_exp)
+
+    assert pytest.approx(boltzmann_policy(arr)) == expected
+
+
+def test_boltzmann_policy_exception():
+    boltzmann_policy = F.BoltzmannPolicy()
+
+    with pytest.raises(TypeError):
+        boltzmann_policy(None)
+
+
 def test_eps_greedy_np():
     rng = np.random.default_rng(10)
     # First rng.random() is 0.9560017096289753
