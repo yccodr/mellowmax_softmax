@@ -27,6 +27,9 @@ start = "mellowmax_softmax.scripts.start_experiment:run_app"
 [tool.yapf]
 based_on_style = "google"
 
+[tool.isort]
+profile="google"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
