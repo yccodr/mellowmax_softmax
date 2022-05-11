@@ -1,2 +1,2 @@
-from .GVI import GVI
-from .SARSA import SARSA
+from mellowmax_softmax.algo.gvi import GVI
+from mellowmax_softmax.algo.sarsa import SARSA

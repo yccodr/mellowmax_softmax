@@ -2,10 +2,11 @@ import json
 
 import gym
 import numpy as np
-from mellowmax_softmax.algo.GVI import GVI
-from mellowmax_softmax.function import boltzmax, mellowmax
 from numpy import fix, random
 from tqdm import tqdm
+
+from mellowmax_softmax.algo.gvi import GVI
+from mellowmax_softmax.function import boltzmax, mellowmax
 
 
 class GVIExp:

@@ -1,7 +1,8 @@
 import argparse
 
 import gym
-from mellowmax_softmax.algo.GVI import GVI
+
+from mellowmax_softmax.algo.gvi import GVI
 from mellowmax_softmax.function import boltzmax, mellowmax
 
 arg_exp = {
