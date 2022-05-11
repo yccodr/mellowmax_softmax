@@ -12,8 +12,7 @@ class TestBoltzmax:
         boltzmax = F.Boltzmax(beta=beta)
 
         arr = np.array([0.1, 0.2, 0.3])
-        arr_exp = np.exp(beta * (arr - arr.max()))
-        expected = np.inner(arr, arr_exp) / np.sum(arr_exp)
+        expected = np.float64(0.23201566678298063)
 
         assert pytest.approx(boltzmax(arr)) == expected
 
@@ -21,9 +20,8 @@ class TestBoltzmax:
         beta = 5
         boltzmax = F.Boltzmax(beta=beta)
 
-        arr = torch.Tensor([0.1, 0.2, 0.3])
-        arr_exp = torch.exp(beta * (arr - arr.max()))
-        expected = torch.inner(arr, arr_exp) / torch.sum(arr_exp)
+        arr = torch.tensor([0.1, 0.2, 0.3])
+        expected = torch.tensor(0.23201566678298063)
 
         assert pytest.approx(boltzmax(arr)) == expected
 
@@ -41,8 +39,7 @@ class TestBoltzmannPolicy:
         boltzmann_policy = F.BoltzmannPolicy(beta=beta)
 
         arr = np.array([0.1, 0.2, 0.3])
-        arr_exp = np.exp(beta * (arr - arr.max()))
-        expected = arr_exp / np.sum(arr_exp)
+        expected = np.array([0.18632372, 0.30719589, 0.50648039])
 
         assert pytest.approx(boltzmann_policy(arr)) == expected
 
@@ -50,9 +47,8 @@ class TestBoltzmannPolicy:
         beta = 5
         boltzmann_policy = F.BoltzmannPolicy(beta=beta)
 
-        arr = torch.Tensor([0.1, 0.2, 0.3])
-        arr_exp = torch.exp(beta * (arr - arr.max()))
-        expected = arr_exp / torch.sum(arr_exp)
+        arr = torch.tensor([0.1, 0.2, 0.3])
+        expected = torch.tensor([0.18632372, 0.30719589, 0.50648039])
 
         assert pytest.approx(boltzmann_policy(arr)) == expected
 
@@ -87,12 +83,12 @@ class TestEpsGreedy:
 
         eps_greedy = F.EpsGreedy(eps=0.5, rng=rng)
 
-        arr = torch.Tensor([0.1, 0.2, 0.3, 0.4, 0.5])
+        arr = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
 
-        expected1 = torch.Tensor([0.0, 0.0, 0.0, 0.0, 1.0])
+        expected1 = torch.tensor([0.0, 0.0, 0.0, 0.0, 1.0])
         assert pytest.approx(eps_greedy(arr)) == expected1
 
-        expected2 = torch.Tensor([0.2, 0.2, 0.2, 0.2, 0.2])
+        expected2 = torch.tensor([0.2, 0.2, 0.2, 0.2, 0.2])
         assert pytest.approx(eps_greedy(arr)) == expected2
 
     def test_eps_greedy_exception(self):
