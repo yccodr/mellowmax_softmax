@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch.optim import Adam
 from torch.distributions import Categorical
+from tqdm import tqdm
 
 
 class reinforce():
@@ -39,7 +40,7 @@ class reinforce():
 
     def calculateLoss(self):
         # print(self.savedAction)
-        savedAction = torch.tensor(self.savedAction).double()
+        savedAction = torch.Tensor(self.savedAction).requires_grad_().double()
         returns = []
         reversedRewards = np.flip(self.rewards, 0)
         g_t = 0
@@ -67,7 +68,7 @@ class reinforce():
     def train(self):
         self.epRewardHistory = []
 
-        for i_episode in count(1):
+        for i_episode in tqdm(range(self.maxEpisodeNum)):
             t = 0
             state = torch.Tensor(self.env.reset())
 
@@ -85,11 +86,8 @@ class reinforce():
             loss = self.calculateLoss()
             self.update(loss)
             self.clear_memory()
-
-            if i_episode >= self.maxEpisodeNum:
-                break
-
-            print('hah')
+            
+        return self.epRewardHistory
 
     def getRewardHistory(self):
         return self.epRewardHistory

@@ -19,5 +19,5 @@ hidden_size = 128
 
 policyNet = policy(observation_dim, action_dim, hidden_size)
 
-PG = reinforce(env, policyNet, BoltzmannPolicy(16.55), maxEpisodeNum=10)
-PG.train()
+PG = reinforce(env, policyNet, BoltzmannPolicy(16.55), maxEpisodeNum=40000)
+rewards = PG.train()
