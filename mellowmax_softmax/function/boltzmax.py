@@ -1,9 +1,7 @@
 from typing import Union
 
-import torch
 import numpy as np
-from torch import Tensor
-from numpy import ndarray
+import torch
 
 
 class Boltzmax():
@@ -11,25 +9,20 @@ class Boltzmax():
     def __init__(self, beta=1) -> None:
         self.beta = beta
 
-    def __call__(self, x: Union[ndarray, Tensor]) -> Union[ndarray, Tensor]:
-        if isinstance(x, ndarray):
-            c = x.max()
-            x_exp = np.exp(self.beta * (x - c))
+    def __call__(
+        self,
+        x: Union[np.ndarray, torch.Tensor],
+    ) -> Union[np.ndarray, torch.Tensor]:
 
-            s = np.inner(x, x_exp)
-            s /= np.sum(x_exp)
+        if isinstance(x, np.ndarray):
+            x_exp = np.exp(self.beta * (x - x.max()))
+            return np.inner(x, x_exp) / np.sum(x_exp)
 
-        elif isinstance(x, Tensor):
-            c = x.max()
-            x_exp = torch.exp(self.beta * (x - c))
+        if isinstance(x, torch.Tensor):
+            x_exp = torch.exp(self.beta * (x - x.max()))
+            return torch.inner(x, x_exp) / torch.sum(x_exp)
 
-            s = torch.inner(x, x_exp)
-            s /= x_exp.sum()
-
-        else:
-            raise TypeError("x must be either np.ndarray or torch.Tensor")
-
-        return s
+        raise TypeError('x must be either np.ndarray or torch.Tensor.')
 
 
 class BoltzmannPolicy():
@@ -37,18 +30,21 @@ class BoltzmannPolicy():
     def __init__(self, beta=1) -> None:
         self.beta = beta
 
-    def __call__(self, x: Union[ndarray, Tensor]) -> Union[ndarray, Tensor]:
-        if isinstance(x, ndarray):
+    def __call__(
+        self,
+        x: Union[np.ndarray, torch.Tensor],
+    ) -> Union[np.ndarray, torch.Tensor]:
+        if isinstance(x, np.ndarray):
             c = x.max()
             x_exp = np.exp(self.beta * (x - c))
             s = x_exp / np.sum(x_exp)
 
-        elif isinstance(x, Tensor):
+        elif isinstance(x, torch.Tensor):
             c = x.max()
             x_exp = torch.exp(self.beta * (x - c))
             s = x_exp / np.sum(x_exp)
 
         else:
-            raise TypeError("x must be either np.ndarray or torch.Tensor")
+            raise TypeError('x must be either np.ndarray or torch.Tensor.')
 
         return s
