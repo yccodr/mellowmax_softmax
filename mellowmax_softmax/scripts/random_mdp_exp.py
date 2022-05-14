@@ -71,7 +71,8 @@ def test_termination(softmax):
                 idx = np.argmax(gvi.Q[s])
                 q_max.append(np.unravel_index(idx, gvi.Q[s].shape))
 
-        avg_iter /= (ITERATION - no_term)
+        valid_iter = ITERATION - no_term
+        avg_iter = avg_iter / valid_iter if valid_iter > 0 else 0
 
         if q_max not in fixed_points or len(fixed_points) == 0:
             fixed_points.append(q_max)
