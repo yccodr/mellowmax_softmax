@@ -54,7 +54,7 @@ class SARSA:
         # Q = np.random.normal(1, 1.0, (self.num_states, self.num_actions))
 
         num_iteration = 0
-        reward = 0
+        total_reward = 0
         done = 0
         state = self.env.reset()
         action = np.random.choice(range(self.num_actions),
@@ -72,7 +72,7 @@ class SARSA:
             self.update_value(state, action, reward, next_state, next_action,
                               done, Q)
 
-            reward += reward
+            total_reward += reward
 
             if done:
                 done = 1
@@ -84,7 +84,7 @@ class SARSA:
 
         self.Q = Q
 
-        return num_iteration, reward, done
+        return num_iteration, total_reward, done
 
     def update_value(self, state, action, reward, next_state, next_action, done,
                      Q):
