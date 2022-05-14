@@ -2,12 +2,11 @@ import json
 
 import gym
 import numpy as np
+import pandas as pd
 from mellowmax_softmax.algo.GVI import GVI
 from mellowmax_softmax.function import boltzmax, mellowmax
 from numpy import fix, random
 from tqdm import tqdm, trange
-
-import pandas as pd
 
 
 class GVIExp:
