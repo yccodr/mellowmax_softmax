@@ -73,12 +73,7 @@ def test_termination(softmax):
 
         avg_iter /= (ITERATION - no_term)
 
-        new_fix_point = False
-        for fixed_point in fixed_points:
-            if fixed_point == q_max:
-                new_fix_point = True
-                break
-        if len(fixed_points) == 0 or new_fix_point:
+        if q_max not in fixed_points or len(fixed_points) == 0:
             fixed_points.append(q_max)
 
         print(
