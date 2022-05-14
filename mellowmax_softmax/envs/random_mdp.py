@@ -47,8 +47,17 @@ class RandomMDP(gym.Env):
     """
 
     def __init__(self):
-        action_space_size = self.np_random.integers(2, 5, endpoint=True)
-        state_space_size = self.np_random.integers(2, 10, endpoint=True)
+        self._init_matrices()
+        self.state = None
+        self.iterations = 0
+        self.steps_beyond_done = None
+
+    def _init_matrices(self, seed: Optional[int] = None):
+        self.rng = np.random.default_rng(
+        ) if seed is None else np.random.default_rng(seed)
+
+        action_space_size = self.rng.integers(2, 5, endpoint=True)
+        state_space_size = self.rng.integers(2, 10, endpoint=True)
 
         self.action_space = spaces.Discrete(action_space_size)
         self.observation_space = spaces.Discrete(state_space_size)
@@ -57,25 +66,24 @@ class RandomMDP(gym.Env):
 
         # S x A x S' -> R
         self.transition = _random_matrix(
-            (state_space_size, action_space_size, state_space_size),
-            self.np_random)
+            (state_space_size, action_space_size, state_space_size), self.rng)
 
         self.transition = (self.transition - np.min(self.transition)) / (
             np.max(self.transition) - np.min(self.transition))
         self.transition /= np.sum(self.transition, axis=-1, keepdims=True)
 
-        self.P = {
-            state: {action: [] for action in range(action_space_size)
-                   } for state in range(state_space_size)
-        }
-
         # S x A -> R
         self.reward = _random_matrix((state_space_size, action_space_size),
-                                     self.np_random)
+                                     self.rng)
 
         # Limit the max reward to be 0.5.
         self.reward /= np.max(self.reward)
         self.reward *= 0.5
+
+        self.P = {
+            state: {action: [] for action in range(action_space_size)
+                   } for state in range(state_space_size)
+        }
 
         # build P transition matrix
         for s in range(state_space_size):
@@ -85,9 +93,6 @@ class RandomMDP(gym.Env):
                     self.P[s][a].append((self.transition[s, a, s_], s_, reward,
                                          s_ == state_space_size - 1))
 
-        self.iterations = 0
-        self.steps_beyond_done = None
-
     def step(self, action: Union[int, np.ndarray]):
         assert self.action_space.contains(action)
         assert self.state is not None, 'Call reset before using step method.'
@@ -96,9 +101,8 @@ class RandomMDP(gym.Env):
 
         reward = self.reward[self.state, action]
 
-        self.state = self.np_random.choice(self.observation_space.n,
-                                           p=self.transition[self.state,
-                                                             action, :])
+        self.state = self.rng.choice(self.observation_space.n,
+                                     p=self.transition[self.state, action, :])
 
         done = self.state == 1 or self.iterations > 1000
 
@@ -124,7 +128,7 @@ class RandomMDP(gym.Env):
         return_info: bool = False,
         options: Optional[dict] = None,
     ):
-        super().reset(seed=seed)
+        self._init_matrices(seed=seed)
         self.state = 0
         self.iterations = 1
         self.steps_beyond_done = None
