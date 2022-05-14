@@ -5,7 +5,9 @@ import numpy as np
 from mellowmax_softmax.algo.GVI import GVI
 from mellowmax_softmax.function import boltzmax, mellowmax
 from numpy import fix, random
-from tqdm import tqdm
+from tqdm import tqdm, trange
+
+import pandas as pd
 
 
 class GVIExp:
@@ -33,15 +35,17 @@ EXP_NAME = 'random_mdp_boltz'
 BETA = 16.55
 
 result = {
-    'num': ITERATION,
-    'avg_iter': 0,
-    'multi_fixed_point': 0,
-    'no_term': 0,
+    'round': [],
+    'avg_iter': [],
+    'multi_fixed_point': [],
+    'no_term': [],
 }
 
 
 def test_termination(softmax):
-    for round in range(200):
+    df = pd.DataFrame(result)
+
+    for round in trange(200):
         env = gym.make('RandomMDP-v0')
         gvi = GVI()
 
@@ -80,14 +84,19 @@ def test_termination(softmax):
             f'round: {round}, no terminate: {no_term}, fixed_points: {len(fixed_points)}, avg. iteration: {avg_iter}'
         )
 
+        res = pd.Series(
+            [round, avg_iter, len(fixed_points), no_term], index=df.columns)
+
+        df = pd.concat([df, res.to_frame().T], ignore_index=True)
+
+        print(df)
+
+    df.to_csv(f'exp_results/{EXP_NAME}_log.csv', encoding='utf-8')
+
 
 exp = {
     'random_mdp_boltz': test_termination(boltzmax.Boltzmax(16.55)),
     'random_mdp_mellow': test_termination(mellowmax.Mellowmax(16.55))
 }
 
-exp['random_mdp_boltz']()
-
-# store result
-with open(f'./exp_results/{EXP_NAME}_log.json', 'w') as f:
-    json.dump(result, f)
+exp[EXP_NAME]()
