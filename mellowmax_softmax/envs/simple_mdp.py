@@ -1,8 +1,9 @@
 from typing import Optional, Union
 
 import gym
+from gym import logger
+from gym import spaces
 import numpy as np
-from gym import logger, spaces
 
 
 class SimpleMDP(gym.Env):
@@ -79,10 +80,11 @@ class SimpleMDP(gym.Env):
         assert self.action_space.contains(action)
         assert self.state is not None, 'Call reset before using step method.'
 
-        self.state = self.np_random.choice(2,
-                                           p=self.transition[self.state,
-                                                             action, :])
-        reward = self.reward[action]
+        self.state = self.np_random.choice(
+            2,
+            p=self.transition[self.state, action, :],
+        )
+        reward = self.reward[self.state][action]
 
         done = self.state == 1
 
