@@ -46,6 +46,7 @@ def test_termination(softmax):
 
     for round in trange(200):
         env = gym.make('RandomMDP-v0')
+        env.reset(seed=round)
         gvi = GVI()
 
         avg_iter = 0
@@ -55,13 +56,13 @@ def test_termination(softmax):
 
         for seed in tqdm(range(ITERATION)):
             gvi.reset()
+            gvi.set_rng(np.random.default_rng(seed + 200))
             gvi.set_env(env)
             gvi.set_softmax(softmax)
 
             # NOTE: delta not specified
             gvi.set_delta(1e-3)
             gvi.set_max_iter(1000)
-            gvi.rng.seed(seed)
 
             q_max = []
 
@@ -89,9 +90,8 @@ def test_termination(softmax):
 
         df = pd.concat([df, res.to_frame().T], ignore_index=True)
 
+        df.to_csv(f'exp_result/{EXP_NAME}_log.csv', encoding='utf-8')
         print(df)
-
-    df.to_csv(f'exp_results/{EXP_NAME}_log.csv', encoding='utf-8')
 
 
 exp = {
