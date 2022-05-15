@@ -29,17 +29,18 @@ class reinforce():
         self.optim = Adam(self.policy.parameters(), lr=self.lr)
 
     def selectAction(self, state):
+        state = torch.FloatTensor(state).unsqueeze(0)
         probs = self.policy(state)
         probs = self.softmax(probs)
         m = Categorical(probs)
         action = m.sample()
 
-        self.savedAction.append(m.log_prob(action))
+        self.savedAction.append(m.log_prob(action)[0])
 
         return action.item()
 
     def calculateLoss(self):
-        savedAction = torch.Tensor(self.savedAction).requires_grad_().double()
+        savedAction = torch.stack(self.savedAction)
 
         returns = []
         reversedRewards = np.flip(self.rewards, 0)
@@ -47,11 +48,9 @@ class reinforce():
         for r in reversedRewards:
             g_t = r + self.gamma * g_t
             returns.insert(0, g_t)
-        returns = torch.tensor(returns)
-        # returns = (returns - returns.mean()) / returns.std()
-        returns = returns.detach()
+        returns = torch.FloatTensor(returns)
 
-        loss = -torch.inner(returns, savedAction)
+        loss = -torch.inner(returns.detach(), savedAction)
 
         return loss
 
@@ -67,6 +66,7 @@ class reinforce():
 
     def train(self):
         self.epRewardHistory = []
+        self.policy.train()
 
         for i_episode in tqdm(range(self.maxEpisodeNum)):
             t = 0
@@ -76,7 +76,6 @@ class reinforce():
                 t += 1
                 action = self.selectAction(state)
                 state, reward, done, _ = self.env.step(action)
-                state = torch.Tensor(state)
                 self.rewards.append(reward)
                 if done:
                     break

@@ -8,7 +8,8 @@ from mellowmax_softmax.function.eps_greedy import EpsGreedy
 
 #####################
 SEED = 7777
-MAX_EP = 40000
+MAX_EP = 3#40000
+NAME = 'exp_1'
 #####################
 
 torch.manual_seed(SEED)
@@ -23,7 +24,15 @@ hidden_size = 128
 
 policyNet = policy(observation_dim, action_dim, hidden_size)
 
-PG = reinforce(env, policyNet, BoltzmannPolicy(16.55), maxEpisodeNum=MAX_EP)
+PG = reinforce(env, policyNet, BoltzmannPolicy(3.0), maxEpisodeNum=MAX_EP)
 
 # reward: list of episode rewards
 rewards = PG.train()
+
+### save to .csv file
+with open(NAME + '.csv', 'w') as resiltFile:
+    i = 0
+    resiltFile.write('ep,reward\n')
+    for r in rewards:
+        i += 1
+        resiltFile.write(str(i)+','+str(r)+'\n')
