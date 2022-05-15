@@ -8,7 +8,7 @@ from mellowmax_softmax.function.eps_greedy import EpsGreedy
 
 #####################
 SEED = 7777
-MAX_EP = 3#40000
+MAX_EP = 40000
 NAME = 'exp_1'
 #####################
 
@@ -17,6 +17,7 @@ torch.manual_seed(SEED)
 env = gym.make('LunarLander-v2')
 env.reset(seed=SEED)
 
+# get dimension of observation and action space
 discrete = isinstance(env.action_space, gym.spaces.Discrete)
 observation_dim = env.observation_space.shape[0]
 action_dim = env.action_space.n if discrete else env.action_space.shape[0]
@@ -35,4 +36,4 @@ with open(NAME + '.csv', 'w') as resiltFile:
     resiltFile.write('ep,reward\n')
     for r in rewards:
         i += 1
-        resiltFile.write(str(i)+','+str(r)+'\n')
+        resiltFile.write(str(i)+','+str(r)+'\n') 

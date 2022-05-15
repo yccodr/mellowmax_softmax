@@ -49,6 +49,7 @@ class reinforce():
             g_t = r + self.gamma * g_t
             returns.insert(0, g_t)
         returns = torch.FloatTensor(returns)
+        returns = (returns - returns.mean()) / returns.std()
 
         loss = -torch.inner(returns.detach(), savedAction)
 
