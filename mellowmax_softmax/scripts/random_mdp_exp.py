@@ -95,8 +95,11 @@ def test_termination(softmax):
 
 
 exp = {
-    'random_mdp_boltz': test_termination(boltzmax.Boltzmax(16.55)),
-    'random_mdp_mellow': test_termination(mellowmax.Mellowmax(16.55))
+    'random_mdp_boltz': lambda: test_termination(boltzmax.Boltzmax(16.55)),
+    'random_mdp_mellow': lambda: test_termination(mellowmax.Mellowmax(16.55))
 }
 
-exp[EXP_NAME]()
+if __name__ == '__main__':
+    print(f'exp {EXP_NAME}')
+
+    exp[EXP_NAME]()
