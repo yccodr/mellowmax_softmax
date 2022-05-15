@@ -12,7 +12,7 @@ class GVI:
                  delta=1e-3,
                  max_iter=1000,
                  gamma=0.98,
-                 rng=np.random.RandomState(10)) -> None:
+                 rng=np.random.default_rng(10)) -> None:
         """ initialize GVI algorithm
         Arguments:
             env: gym environment
@@ -112,6 +112,9 @@ class GVI:
     def set_gamma(self, gamma) -> None:
         self.gamma = gamma
 
+    def set_rng(self, rng) -> None:
+        self.rng = rng
+
     def get_result(self) -> int:
         """
         return:
@@ -125,3 +128,4 @@ class GVI:
         self.delta = 1e-3
         self.max_iter = 1000
         self.num_iter = None
+        self.rng = None
