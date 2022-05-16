@@ -27,8 +27,9 @@ class SARSA:
         self.max_iter = max_iter
         self.gamma = gamma
         self.softmax = None
+        self.Q = None
 
-    def start(self) -> bool:
+    def start(self):
         """ start value iteration
 
             Returns:
@@ -45,13 +46,17 @@ class SARSA:
         self.num_states = self.env.observation_space.n
         self.num_actions = self.env.action_space.n
 
-        self.num_iter, self.reward, done = self.run()
-        return self.num_iter, self.reward, done
+        self.num_iter, self.reward, done, Q = self.run()
+        return self.num_iter, self.reward, done, Q
 
     def run(self):
         # initialize acion value function Q
-        Q = np.zeros((self.num_states, self.num_actions))
-        # Q = np.random.normal(1, 1.0, (self.num_states, self.num_actions))
+        # Q = np.zeros((self.num_states, self.num_actions))if self.Q is None else self.Q.copy()
+        Q = np.random.normal(
+            0.5,
+            1.0,
+            (self.num_states, self.num_actions),
+        ) if self.Q is None else self.Q.copy()
 
         num_iteration = 0
         total_reward = 0
@@ -83,11 +88,18 @@ class SARSA:
             state, action = next_state, next_action
 
         self.Q = Q
+        return num_iteration, total_reward, done, Q
 
-        return num_iteration, total_reward, done
-
-    def update_value(self, state, action, reward, next_state, next_action, done,
-                     Q):
+    def update_value(
+        self,
+        state,
+        action,
+        reward,
+        next_state,
+        next_action,
+        done,
+        Q,
+    ):
         if done:
             Q[state][action] += self.alpha * (reward - Q[state][action])
         else:
