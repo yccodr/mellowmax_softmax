@@ -51,12 +51,13 @@ class SARSA:
 
     def run(self):
         # initialize acion value function Q
-        # Q = np.zeros((self.num_states, self.num_actions))if self.Q is None else self.Q.copy()
-        Q = np.random.normal(
-            0.5,
-            1.0,
-            (self.num_states, self.num_actions),
-        ) if self.Q is None else self.Q.copy()
+        Q = np.zeros((self.num_states,
+                      self.num_actions)) if self.Q is None else self.Q.copy()
+        # Q = np.random.normal(
+        #     0.5,
+        #     1.0,
+        #     (self.num_states, self.num_actions),
+        # ) if self.Q is None else self.Q.copy()
 
         num_iteration = 0
         total_reward = 0
@@ -101,11 +102,12 @@ class SARSA:
         Q,
     ):
         if done:
-            Q[state][action] += self.alpha * (reward - Q[state][action])
+            Q[state, action] += self.alpha * (reward - Q[state, action])
         else:
-            Q[state][action] += self.alpha * (
-                reward + self.gamma * Q[next_state][next_action] -
-                Q[state][action])
+            Q[state,
+              action] += self.alpha * (reward +
+                                       self.gamma * Q[next_state, next_action] -
+                                       Q[state, action])
 
     def set_env(self, env) -> None:
         self.env = env
