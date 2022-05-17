@@ -5,7 +5,6 @@ class SARSA:
     """
     State-action-reward-state-action (SARSA)
     """
-
     def __init__(self,
                  env=None,
                  policy=None,
@@ -27,6 +26,7 @@ class SARSA:
         self.max_iter = max_iter
         self.gamma = gamma
         self.softmax = None
+        self.rewards = []
 
     def start(self) -> bool:
         """ start value iteration
@@ -48,43 +48,45 @@ class SARSA:
         self.num_iter, self.reward, done = self.run()
         return self.num_iter, self.reward, done
 
-    def run(self):
+    def run(self, episode_num=100):
         # initialize acion value function Q
-        Q = np.zeros((self.num_states, self.num_actions))
-        # Q = np.random.normal(1, 1.0, (self.num_states, self.num_actions))
+        # Q = np.zeros((self.num_states, self.num_actions))
+        Q = np.random.normal(1, 1.0, (self.num_states, self.num_actions))
 
-        num_iteration = 0
-        total_reward = 0
-        done = 0
-        state = self.env.reset()
-        action = np.random.choice(range(self.num_actions),
-                                  p=self.policy(Q[state]))
+        for episode in range(episode_num):
+            num_iteration = 0
+            total_reward = 0
+            state = self.env.reset()
+            action = np.random.choice(range(self.num_actions),
+                                      p=self.policy(Q[state]))
 
-        while True:
-            num_iteration += 1
+            while True:
+                num_iteration += 1
 
-            next_state, reward, done, _ = self.env.step(action)
+                next_state, reward, done, _ = self.env.step(action)
 
-            # choose action
-            next_action = np.random.choice(range(self.num_actions),
-                                           p=self.policy(Q[next_state]))
+                # choose action
+                next_action = np.random.choice(range(self.num_actions),
+                                               p=self.policy(Q[next_state]))
 
-            self.update_value(state, action, reward, next_state, next_action,
-                              done, Q)
+                self.update_value(state, action, reward, next_state,
+                                  next_action, done, Q)
 
-            total_reward += reward
+                total_reward += reward
 
-            if done:
-                done = 1
-                break
-            if num_iteration > self.max_iter:
-                break
+                if done:
+                    done = 1
+                    break
+                if num_iteration > self.max_iter:
+                    break
 
-            state, action = next_state, next_action
+                state, action = next_state, next_action
+
+            self.rewards.append(total_reward)
 
         self.Q = Q
 
-        return num_iteration, total_reward, done
+        return num_iteration, sum(self.rewards), done
 
     def update_value(self, state, action, reward, next_state, next_action, done,
                      Q):
@@ -123,3 +125,4 @@ class SARSA:
         self.alpha = 0.1
         self.max_iter = 1000
         self.gamma = 0.98
+        self.rewards = []
