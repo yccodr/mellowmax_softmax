@@ -90,11 +90,12 @@ class SARSA:
     def update_value(self, state, action, reward, next_state, next_action, done,
                      Q):
         if done:
-            Q[state][action] += self.alpha * (reward - Q[state][action])
+            Q[state, action] += self.alpha * (reward - Q[state, action])
         else:
-            Q[state][action] += self.alpha * (
-                reward + self.gamma * Q[next_state][next_action] -
-                Q[state][action])
+            Q[state,
+              action] += self.alpha * (reward +
+                                       self.gamma * Q[next_state, next_action] -
+                                       Q[state, action])
 
     def set_env(self, env) -> None:
         self.env = env
