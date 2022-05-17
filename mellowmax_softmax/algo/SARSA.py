@@ -25,7 +25,6 @@ class SARSA:
         self.alpha = alpha
         self.max_iter = max_iter
         self.gamma = gamma
-        self.softmax = None
         self.rewards = []
 
     def start(self) -> bool:
