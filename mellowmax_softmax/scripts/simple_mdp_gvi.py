@@ -8,19 +8,12 @@ from mellowmax_softmax import algo
 from mellowmax_softmax import function as F
 
 
-def paint(x, max_y, boltz_y, mm_y):
+def paint(max_y, boltz_y, mm_y):
     plt.figure(figsize=(15, 15))
-    plt.plot(x, max_y, label='max')
-    plt.plot(
-        x,
-        np.convolve(boltz_y, np.full(10, 1.0 / 10), mode='same'),
-        label='boltz',
-    )
-    plt.plot(
-        x,
-        np.convolve(mm_y, np.full(10, 1.0 / 10), mode='same'),
-        label='mm',
-    )
+    plt.plot(max_y, label='max')
+    plt.plot(boltz_y, label='boltz')
+    plt.plot(mm_y, label='mm')
+    plt.legend()
     plt.savefig('./simple_mdp_gvi.png')
 
 
@@ -28,8 +21,8 @@ env = gym.make('SimpleMDP-v0')
 
 gvi = algo.GVI(
     env=env,
-    delta=1e-10,
-    max_iter=2500,
+    delta=1e-15,
+    max_iter=3000,
 )
 
 x = np.arange(start=1.0, stop=25.0, step=0.01, dtype=np.float32)
@@ -45,6 +38,8 @@ for beta in tqdm(x):
     gvi.start()
     boltz_y.append(gvi.get_result())
 
+print(f'boltz_max: {np.max(boltz_y)} at {np.argmax(boltz_y)/100}')
+
 mm_y = []
 
 for omega in tqdm(x):
@@ -52,10 +47,9 @@ for omega in tqdm(x):
     gvi.start()
     mm_y.append(gvi.get_result())
 
-paint(x, max_y, boltz_y, mm_y)
+paint(max_y, boltz_y, mm_y)
 
 data = pd.DataFrame({
-    'x': x,
     'max': max_y,
     'boltz': boltz_y,
     'mm': mm_y,
