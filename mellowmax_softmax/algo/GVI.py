@@ -62,8 +62,8 @@ class GVI:
 
     def policy_iteration(self):
         # initialize action value function Q
-        # Q = np.zeros((self.num_states, self.num_actions))
-        Q = self.rng.normal(1, 1.0, (self.num_states, self.num_actions))
+        Q = np.zeros((self.num_states, self.num_actions))
+        # Q = self.rng.normal(1, 1.0, (self.num_states, self.num_actions))
 
         num_iteration = 0
         done = 0
