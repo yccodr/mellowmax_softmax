@@ -76,6 +76,6 @@ class MellowmaxPolicy():
             tmp = tmp.detach().numpy()
 
         def f(beta):
-            return np.exp(beta * tmp) @ tmp.T
+            return np.exp(beta * tmp - np.max(beta * tmp)) @ tmp.T
 
         return optimize.brentq(f, -10, 10)
