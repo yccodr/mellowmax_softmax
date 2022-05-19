@@ -15,12 +15,14 @@ class reinforce():
                  softmax,
                  gamma=0.99,
                  lr=0.005,
+                 batch_ep_size=10,
                  maxEpisodeNum=40000) -> None:
         self.env = env
         self.policy = policy
         self.softmax = softmax
         self.gamma = gamma
         self.lr = lr
+        self.batch_ep_size = batch_ep_size
         self.maxEpisodeNum = maxEpisodeNum
         self.savedAction = []
         self.rewards = []
@@ -73,7 +75,7 @@ class reinforce():
             t = 0
             state = torch.Tensor(self.env.reset())
 
-            while t < 9999:
+            while True:
                 t += 1
                 action = self.selectAction(state)
                 state, reward, done, _ = self.env.step(action)
@@ -83,10 +85,12 @@ class reinforce():
 
             ep_reward = sum(self.rewards)
             self.epRewardHistory.append(ep_reward)
-            loss = self.calculateLoss()
-            self.update(loss)
-            self.clear_memory()
-            
+
+            if i_episode % 10 == 0:
+                loss = self.calculateLoss()
+                self.update(loss)
+                self.clear_memory()
+
         return self.epRewardHistory
 
     def getRewardHistory(self):
