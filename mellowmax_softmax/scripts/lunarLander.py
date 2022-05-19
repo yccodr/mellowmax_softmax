@@ -28,12 +28,12 @@ policyNet = policy(observation_dim, action_dim, hidden_size)
 PG = reinforce(env, policyNet, BoltzmannPolicy(3.0), maxEpisodeNum=MAX_EP)
 
 # reward: list of episode rewards
-rewards = PG.train()
+# rewards = PG.train()
 
 ### save to .csv file
 with open(NAME + '.csv', 'w') as resiltFile:
     i = 0
     resiltFile.write('ep,reward\n')
-    for r in rewards:
+    for r in PG.train():
         i += 1
-        resiltFile.write(str(i)+','+str(r)+'\n') 
+        resiltFile.write(str(i) + ',' + str(r) + '\n')
