@@ -68,11 +68,11 @@ class reinforce():
         self.optim.step()
 
     def train(self):
-        self.epRewardHistory = []
         self.policy.train()
 
         for i_episode in tqdm(range(self.maxEpisodeNum)):
             t = 0
+            ep_reward = 0
             state = torch.Tensor(self.env.reset())
 
             while True:
@@ -80,18 +80,16 @@ class reinforce():
                 action = self.selectAction(state)
                 state, reward, done, _ = self.env.step(action)
                 self.rewards.append(reward)
+                ep_reward += reward
                 if done:
                     break
-
-            ep_reward = sum(self.rewards)
-            self.epRewardHistory.append(ep_reward)
 
             if i_episode % 10 == 0:
                 loss = self.calculateLoss()
                 self.update(loss)
                 self.clear_memory()
 
-        return self.epRewardHistory
+            yield ep_reward
 
     def getRewardHistory(self):
         return self.epRewardHistory
