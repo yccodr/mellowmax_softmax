@@ -2,10 +2,11 @@ import json
 
 import gym
 import numpy as np
+import pandas as pd
 from mellowmax_softmax.algo.GVI import GVI
 from mellowmax_softmax.function import boltzmax, mellowmax
 from numpy import fix, random
-from tqdm import tqdm
+from tqdm import tqdm, trange
 
 
 class GVIExp:
@@ -33,32 +34,35 @@ EXP_NAME = 'random_mdp_boltz'
 BETA = 16.55
 
 result = {
-    'num': ITERATION,
-    'avg_iter': 0,
-    'multi_fixed_point': 0,
-    'no_term': 0,
+    'round': [],
+    'avg_iter': [],
+    'multi_fixed_point': [],
+    'no_term': [],
 }
 
 
 def test_termination(softmax):
-    for round in range(200):
+    df = pd.DataFrame(result)
+
+    for round in trange(200):
         env = gym.make('RandomMDP-v0')
+        env.reset(seed=round)
         gvi = GVI()
 
         avg_iter = 0
         no_term = 0
-        multi_fixed_point_cnt = 0
-        fixed_points = []
+        fixed_point = None
+        multi_fixed_point = 0
 
         for seed in tqdm(range(ITERATION)):
             gvi.reset()
+            gvi.set_rng(np.random.default_rng(seed + 200))
             gvi.set_env(env)
             gvi.set_softmax(softmax)
 
             # NOTE: delta not specified
             gvi.set_delta(1e-3)
             gvi.set_max_iter(1000)
-            gvi.rng.seed(seed)
 
             q_max = []
 
@@ -74,21 +78,30 @@ def test_termination(softmax):
         valid_iter = ITERATION - no_term
         avg_iter = avg_iter / valid_iter if valid_iter > 0 else 0
 
-        if q_max not in fixed_points or len(fixed_points) == 0:
-            fixed_points.append(q_max)
+        if fixed_point is None:
+            fixed_point = q_max.copy()
+        elif (fixed_point != q_max).all():
+            multi_fixed_point = 1
 
         print(
-            f'round: {round}, no terminate: {no_term}, fixed_points: {len(fixed_points)}, avg. iteration: {avg_iter}'
+            f'round: {round}, no terminate: {no_term}, fixed_points: {multi_fixed_point}, avg. iteration: {avg_iter}'
         )
+
+        res = pd.Series([round, avg_iter, multi_fixed_point, no_term],
+                        index=df.columns)
+
+        df = pd.concat([df, res.to_frame().T], ignore_index=True)
+
+        df.to_csv(f'exp_result/{EXP_NAME}_log.csv', encoding='utf-8')
+        print(df)
 
 
 exp = {
-    'random_mdp_boltz': test_termination(boltzmax.Boltzmax(16.55)),
-    'random_mdp_mellow': test_termination(mellowmax.Mellowmax(16.55))
+    'random_mdp_boltz': lambda: test_termination(boltzmax.Boltzmax(16.55)),
+    'random_mdp_mellow': lambda: test_termination(mellowmax.Mellowmax(16.55))
 }
 
-exp['random_mdp_boltz']()
+if __name__ == '__main__':
+    print(f'exp {EXP_NAME}')
 
-# store result
-with open(f'./exp_results/{EXP_NAME}_log.json', 'w') as f:
-    json.dump(result, f)
+    exp[EXP_NAME]()
