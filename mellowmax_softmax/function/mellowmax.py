@@ -62,7 +62,7 @@ class MellowmaxPolicy():
         elif isinstance(x, torch.Tensor):
             c = x.max()
             x_exp = torch.exp(beta * (x - c))
-            s = x_exp / np.sum(x_exp)
+            s = x_exp / torch.sum(x_exp)
 
         else:
             raise TypeError("x must be either np.ndarray or torch.Tensor")
@@ -72,8 +72,10 @@ class MellowmaxPolicy():
     def compute_beta(self, x):
         tmp = x - self.mm(x)
 
-        # TODO: Haven't implemented torch version
+        if isinstance(x, torch.Tensor):
+            tmp = tmp.detach().numpy()
+
         def f(beta):
-            return np.exp(beta * tmp) @ tmp
+            return np.exp(beta * tmp - np.max(beta * tmp)) @ tmp.T
 
         return optimize.brentq(f, -10, 10)
