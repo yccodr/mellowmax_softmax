@@ -69,6 +69,7 @@ class reinforce():
 
     def train(self):
         self.policy.train()
+        batchLosses = None
 
         for i_episode in tqdm(range(self.maxEpisodeNum)):
             t = 0
@@ -84,10 +85,14 @@ class reinforce():
                 if done:
                     break
 
+            if not batchLosses:
+                batchLosses = self.calculateLoss()
+            else:
+                batchLosses += self.calculateLoss()
+            self.clear_memory()
             if i_episode % 10 == 0:
-                loss = self.calculateLoss()
-                self.update(loss)
-                self.clear_memory()
+                self.update(batchLosses)
+                batchLosses = None
 
             yield ep_reward
 
