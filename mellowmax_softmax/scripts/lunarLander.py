@@ -21,19 +21,19 @@ env.reset(seed=SEED)
 discrete = isinstance(env.action_space, gym.spaces.Discrete)
 observation_dim = env.observation_space.shape[0]
 action_dim = env.action_space.n if discrete else env.action_space.shape[0]
-hidden_size = 128
+hidden_size = 16
 
 policyNet = policy(observation_dim, action_dim, hidden_size)
 
 PG = reinforce(env, policyNet, BoltzmannPolicy(3.0), maxEpisodeNum=MAX_EP)
 
 # reward: list of episode rewards
-# rewards = PG.train()
+rewards = PG.train()
 
 ### save to .csv file
 with open(NAME + '.csv', 'w') as resiltFile:
     i = 0
     resiltFile.write('ep,reward\n')
-    for r in PG.train():
+    for r in rewards:
         i += 1
-        resiltFile.write(str(i) + ',' + str(r) + '\n')
+        resiltFile.write(str(i)+','+str(r)+'\n') 
